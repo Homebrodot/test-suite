@@ -8,11 +8,28 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Button",
+"class": "MainMenuButton",
+"language": "GDScript",
+"path": "res://MainMenuButton.gd"
+}, {
+"base": "Button",
+"class": "QuitButton",
+"language": "GDScript",
+"path": "res://QuitButton.gd"
+} ]
+_global_script_class_icons={
+"MainMenuButton": "",
+"QuitButton": ""
+}
+
 [application]
 
 config/name="Homebrodot Test Suite"
-config/description="Tests for basic features of Godot Engine to be implemented on new platforms.."
-run/main_scene="res://BatteryTest.tscn"
+config/description="Tests for basic features of Godot Engine to be implemented on new platforms."
+run/main_scene="res://Main.tscn"
+boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
 
 [display]
