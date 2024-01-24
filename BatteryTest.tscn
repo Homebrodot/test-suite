@@ -14,12 +14,12 @@ var _power_state = OS.POWERSTATE_UNKNOWN
 var _battery_seconds = 0
 var _time_elapsed = 0
 
-onready var battery_percent_label = $VBox/BatPerHBox/Amount
-onready var power_state_label = $VBox/PowStateHBox/Amount
-onready var battery_seconds_label = $VBox/BatSecHBox/Amount
+onready var battery_percent_label = $Values/BatteryPercentage/Value
+onready var power_state_label = $Values/PowerState/Value
+onready var battery_seconds_label = $Values/SecondsLeft/Value
 onready var timer = $Timer
 
-func _ready():	
+func _ready():
 	# in addition to showing in the GUI, also log to stdout every 5s
 	timer.set_wait_time(_timer_const)
 	timer.start()
@@ -32,12 +32,12 @@ func _parse_state(ps: int) -> String:
 		OS.POWERSTATE_CHARGED: return \"Fully Charged\"
 		_: return \"Unknown\"
 
-func _update_values() -> void:
+func _update_values():
 	_battery_percent = OS.get_power_percent_left()
 	_power_state = _parse_state(OS.get_power_state())
 	_battery_seconds = OS.get_power_seconds_left()
 
-func _update_labels() -> void:
+func _update_labels():
 	if (_battery_percent == -1): battery_percent_label.text = \"NOT AVAILABLE\"
 	else: battery_percent_label.text = str(_battery_percent)
 
@@ -47,7 +47,7 @@ func _update_labels() -> void:
 	else: battery_seconds_label.text = str(_battery_seconds)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta) -> void:
+func _process(_delta):
 	_update_values()
 	_update_labels()
 
@@ -67,15 +67,15 @@ margin_bottom = 720.0
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 margin_left = 453.0
-margin_top = 261.0
+margin_top = 218.0
 margin_right = 827.0
-margin_bottom = 459.0
+margin_bottom = 502.0
 
 [node name="BatteryTest" type="VBoxContainer" parent="PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 367.0
-margin_bottom = 191.0
+margin_bottom = 277.0
 rect_min_size = Vector2( 360, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -88,7 +88,7 @@ margin_bottom = 14.0
 text = "Battery / Power Test"
 align = 1
 
-[node name="Container" type="Panel" parent="PanelContainer/BatteryTest"]
+[node name="Padding1" type="Panel" parent="PanelContainer/BatteryTest"]
 margin_left = 180.0
 margin_top = 18.0
 margin_right = 180.0
@@ -97,90 +97,118 @@ rect_min_size = Vector2( 0, 30 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="VBox" type="VBoxContainer" parent="PanelContainer/BatteryTest"]
+[node name="Instruction1" type="Label" parent="PanelContainer/BatteryTest"]
 margin_top = 52.0
 margin_right = 360.0
-margin_bottom = 102.0
+margin_bottom = 100.0
+text = "On battery-powered devices
+the following should NOT say
+\"Not Available\""
+align = 1
+
+[node name="Padding2" type="Panel" parent="PanelContainer/BatteryTest"]
+margin_left = 180.0
+margin_top = 104.0
+margin_right = 180.0
+margin_bottom = 134.0
+rect_min_size = Vector2( 0, 30 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Values" type="VBoxContainer" parent="PanelContainer/BatteryTest"]
+margin_top = 138.0
+margin_right = 360.0
+margin_bottom = 188.0
 alignment = 1
 
-[node name="BatPerHBox" type="HBoxContainer" parent="PanelContainer/BatteryTest/VBox"]
+[node name="BatteryPercentage" type="HBoxContainer" parent="PanelContainer/BatteryTest/Values"]
 margin_right = 360.0
 margin_bottom = 14.0
 alignment = 1
 
-[node name="Label" type="Label" parent="PanelContainer/BatteryTest/VBox/BatPerHBox"]
-margin_left = 69.0
-margin_right = 194.0
+[node name="Label" type="Label" parent="PanelContainer/BatteryTest/Values/BatteryPercentage"]
+margin_right = 178.0
 margin_bottom = 14.0
+size_flags_horizontal = 3
 text = "Battery Percentage:"
+valign = 1
 
-[node name="Amount" type="Label" parent="PanelContainer/BatteryTest/VBox/BatPerHBox"]
-margin_left = 198.0
-margin_right = 290.0
+[node name="Value" type="Label" parent="PanelContainer/BatteryTest/Values/BatteryPercentage"]
+margin_left = 182.0
+margin_right = 360.0
 margin_bottom = 14.0
+size_flags_horizontal = 3
 text = "PLACEHOLDER"
+align = 1
+valign = 1
 
-[node name="PowStateHBox" type="HBoxContainer" parent="PanelContainer/BatteryTest/VBox"]
+[node name="PowerState" type="HBoxContainer" parent="PanelContainer/BatteryTest/Values"]
 margin_top = 18.0
 margin_right = 360.0
 margin_bottom = 32.0
 alignment = 1
 
-[node name="Label" type="Label" parent="PanelContainer/BatteryTest/VBox/PowStateHBox"]
-margin_left = 92.0
-margin_right = 171.0
+[node name="Label" type="Label" parent="PanelContainer/BatteryTest/Values/PowerState"]
+margin_right = 178.0
 margin_bottom = 14.0
+size_flags_horizontal = 3
 text = "Power State:"
 
-[node name="Amount" type="Label" parent="PanelContainer/BatteryTest/VBox/PowStateHBox"]
-margin_left = 175.0
-margin_right = 267.0
+[node name="Value" type="Label" parent="PanelContainer/BatteryTest/Values/PowerState"]
+margin_left = 182.0
+margin_right = 360.0
 margin_bottom = 14.0
+size_flags_horizontal = 3
 text = "PLACEHOLDER"
+align = 1
+valign = 1
 
-[node name="BatSecHBox" type="HBoxContainer" parent="PanelContainer/BatteryTest/VBox"]
+[node name="SecondsLeft" type="HBoxContainer" parent="PanelContainer/BatteryTest/Values"]
 margin_top = 36.0
 margin_right = 360.0
 margin_bottom = 50.0
 alignment = 1
 
-[node name="Label" type="Label" parent="PanelContainer/BatteryTest/VBox/BatSecHBox"]
-margin_left = 91.0
-margin_right = 173.0
+[node name="Label" type="Label" parent="PanelContainer/BatteryTest/Values/SecondsLeft"]
+margin_right = 178.0
 margin_bottom = 14.0
+size_flags_horizontal = 3
 text = "Seconds left:"
 
-[node name="Amount" type="Label" parent="PanelContainer/BatteryTest/VBox/BatSecHBox"]
-margin_left = 177.0
-margin_right = 269.0
+[node name="Value" type="Label" parent="PanelContainer/BatteryTest/Values/SecondsLeft"]
+margin_left = 182.0
+margin_right = 360.0
 margin_bottom = 14.0
+size_flags_horizontal = 3
 text = "PLACEHOLDER"
-
-[node name="Timer" type="Timer" parent="PanelContainer/BatteryTest"]
-wait_time = 5.0
+align = 1
+valign = 1
 
 [node name="Container2" type="Panel" parent="PanelContainer/BatteryTest"]
 margin_left = 180.0
-margin_top = 106.0
+margin_top = 192.0
 margin_right = 180.0
-margin_bottom = 136.0
+margin_bottom = 222.0
 rect_min_size = Vector2( 0, 30 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="MainMenuButton" type="Button" parent="PanelContainer/BatteryTest"]
-margin_top = 140.0
+margin_top = 226.0
 margin_right = 360.0
-margin_bottom = 160.0
+margin_bottom = 246.0
 text = "Main Menu"
 script = ExtResource( 2 )
 
 [node name="QuitButton" type="Button" parent="PanelContainer/BatteryTest"]
-margin_top = 164.0
+margin_top = 250.0
 margin_right = 360.0
-margin_bottom = 184.0
+margin_bottom = 270.0
 text = "Exit"
 script = ExtResource( 1 )
+
+[node name="Timer" type="Timer" parent="PanelContainer/BatteryTest"]
+wait_time = 5.0
 
 [node name="Camera" parent="." instance=ExtResource( 3 )]
 

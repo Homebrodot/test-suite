@@ -1,14 +1,16 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://QuitButton.gd" type="Script" id=1]
 [ext_resource path="res://Background.tscn" type="PackedScene" id=2]
+[ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://Credits.tscn" type="PackedScene" id=4]
 
 [sub_resource type="GDScript" id=3]
 resource_name = "SoftwareKeyboardButton"
 script/source = "extends Button
 
 func _pressed():
-	get_tree().change_scene(\"res://SoftwareKeyboardTest.tscn\")
+	var __ = get_tree().change_scene(\"res://SoftwareKeyboardTest.tscn\")
 "
 
 [sub_resource type="GDScript" id=2]
@@ -16,87 +18,425 @@ resource_name = "BatteryPowerButton"
 script/source = "extends Button
 
 func _pressed():
-	get_tree().change_scene(\"res://BatteryTest.tscn\")
+	var __ = get_tree().change_scene(\"res://BatteryTest.tscn\")
 "
 
-[node name="Control" type="CenterContainer"]
+[sub_resource type="GDScript" id=4]
+resource_name = "AlertMessage"
+script/source = "extends Button
+
+func _pressed():
+	OS.alert(\"Test succeeded\", \"Alert Message Test\")
+"
+
+[sub_resource type="GDScript" id=6]
+resource_name = "Calendar"
+script/source = "extends VBoxContainer
+
+export(bool) var local = true
+
+onready var _weekday = $Weekday
+onready var _day = $Date/Day
+onready var _month = $Date/Month
+onready var _year = $Date/Year
+
+func _process(delta):
+	var date = Time.get_date_dict_from_system(not local)
+	var weekday = date[\"weekday\"]
+	match(weekday):
+		Time.WEEKDAY_MONDAY: _weekday.text = \"Monday\"
+		Time.WEEKDAY_TUESDAY: _weekday.text = \"Tuesday\"
+		Time.WEEKDAY_WEDNESDAY: _weekday.text = \"Wednesday\"
+		Time.WEEKDAY_THURSDAY: _weekday.text = \"Thursday\"
+		Time.WEEKDAY_FRIDAY: _weekday.text = \"Friday\"
+		Time.WEEKDAY_SATURDAY: _weekday.text = \"Saturday\"
+		Time.WEEKDAY_SUNDAY: _weekday.text = \"Sunday\"
+		_: _weekday.text = \"Unavailable\"
+	var day = date[\"day\"]
+	_day.text = str(day)
+	var month = date[\"month\"]
+	match(month):
+		Time.MONTH_JANUARY: _month.text = \"January\"
+		Time.MONTH_FEBRUARY: _month.text = \"February\"
+		Time.MONTH_MARCH: _month.text = \"March\"
+		Time.MONTH_APRIL: _month.text = \"April\"
+		Time.MONTH_MAY: _month.text = \"May\"
+		Time.MONTH_JUNE: _month.text = \"June\"
+		Time.MONTH_JULY: _month.text = \"July\"
+		Time.MONTH_AUGUST: _month.text = \"August\"
+		Time.MONTH_SEPTEMBER: _month.text = \"September\"
+		Time.MONTH_OCTOBER: _month.text = \"October\"
+		Time.MONTH_NOVEMBER: _month.text = \"November\"
+		Time.MONTH_DECEMBER: _month.text = \"December\"
+		_: _month.text = \"Unavailable\"
+	var year = date[\"year\"]
+	_year.text = str(year)
+"
+
+[sub_resource type="GDScript" id=5]
+resource_name = "Clock"
+script/source = "extends Label
+
+export(bool) var local = true
+
+func _process(delta):
+	var time = Time.get_time_dict_from_system(not local)
+	var h = format_time_number(time[\"hour\"])
+	var m = format_time_number(time[\"minute\"])
+	var s = format_time_number(time[\"second\"])
+	
+	self.text = h + \":\" + m + \":\" + s
+
+func format_time_number(num: int) -> String:
+	var ret = str(num)
+	if ret.length() < 2: ret = \"0\" + ret
+	return ret
+"
+
+[node name="Main" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = 640.0
+margin_top = 360.0
+margin_right = -640.0
+margin_bottom = -360.0
+
+[node name="MainMenu" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -640.0
+margin_top = -360.0
+margin_right = 640.0
+margin_bottom = 360.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu"]
 margin_left = 547.0
-margin_top = 242.0
+margin_top = 226.0
 margin_right = 732.0
-margin_bottom = 478.0
+margin_bottom = 494.0
+alignment = 1
 
-[node name="GridContainer" type="VBoxContainer" parent="PanelContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainMenu/VBoxContainer"]
+margin_right = 185.0
+margin_bottom = 64.0
+
+[node name="CreditsButton" type="TextureButton" parent="MainMenu/VBoxContainer/CenterContainer"]
+margin_left = 60.0
+margin_right = 124.0
+margin_bottom = 64.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+toggle_mode = true
+texture_normal = ExtResource( 3 )
+stretch_mode = 5
+
+[node name="Menu" type="PanelContainer" parent="MainMenu/VBoxContainer"]
+margin_top = 68.0
+margin_right = 185.0
+margin_bottom = 268.0
+
+[node name="GridContainer" type="VBoxContainer" parent="MainMenu/VBoxContainer/Menu"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 178.0
-margin_bottom = 229.0
+margin_bottom = 193.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="PanelContainer/GridContainer"]
+[node name="Label" type="Label" parent="MainMenu/VBoxContainer/Menu/GridContainer"]
 margin_right = 171.0
-margin_bottom = 48.0
-text = "Homebrodot Test Suite
-
-Please select a test below:"
+margin_bottom = 14.0
+text = "Homebrodot Test Suite"
 align = 1
 
-[node name="Padding1" type="Panel" parent="PanelContainer/GridContainer"]
+[node name="Padding1" type="Panel" parent="MainMenu/VBoxContainer/Menu/GridContainer"]
 margin_left = 85.0
-margin_top = 52.0
+margin_top = 18.0
 margin_right = 85.0
-margin_bottom = 82.0
-rect_min_size = Vector2( 0, 30 )
+margin_bottom = 38.0
+rect_min_size = Vector2( 0, 20 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="SoftwareKeyboard" type="Button" parent="PanelContainer/GridContainer"]
-margin_top = 86.0
+[node name="Instruction" type="Label" parent="MainMenu/VBoxContainer/Menu/GridContainer"]
+margin_top = 42.0
 margin_right = 171.0
-margin_bottom = 106.0
+margin_bottom = 56.0
+text = "Please select a test below:"
+align = 1
+
+[node name="SoftwareKeyboard" type="Button" parent="MainMenu/VBoxContainer/Menu/GridContainer"]
+margin_top = 60.0
+margin_right = 171.0
+margin_bottom = 80.0
 text = "Software Keyboard"
 icon_align = 1
 script = SubResource( 3 )
 
-[node name="Padding2" type="Panel" parent="PanelContainer/GridContainer"]
-margin_left = 85.0
-margin_top = 110.0
-margin_right = 85.0
-margin_bottom = 140.0
-rect_min_size = Vector2( 0, 30 )
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="BatteryPower" type="Button" parent="PanelContainer/GridContainer"]
-margin_top = 144.0
+[node name="BatteryPower" type="Button" parent="MainMenu/VBoxContainer/Menu/GridContainer"]
+margin_top = 84.0
 margin_right = 171.0
-margin_bottom = 164.0
+margin_bottom = 104.0
 text = "Battery / Power"
 icon_align = 1
 script = SubResource( 2 )
 
-[node name="Padding3" type="Panel" parent="PanelContainer/GridContainer"]
+[node name="AlertMessage" type="Button" parent="MainMenu/VBoxContainer/Menu/GridContainer"]
+margin_top = 108.0
+margin_right = 171.0
+margin_bottom = 128.0
+text = "Alert Message"
+script = SubResource( 4 )
+
+[node name="Padding2" type="Panel" parent="MainMenu/VBoxContainer/Menu/GridContainer"]
 margin_left = 85.0
-margin_top = 168.0
+margin_top = 132.0
 margin_right = 85.0
-margin_bottom = 198.0
+margin_bottom = 162.0
 rect_min_size = Vector2( 0, 30 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Quit" type="Button" parent="PanelContainer/GridContainer"]
-margin_top = 202.0
+[node name="Quit" type="Button" parent="MainMenu/VBoxContainer/Menu/GridContainer"]
+margin_top = 166.0
 margin_right = 171.0
-margin_bottom = 222.0
+margin_bottom = 186.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "Exit"
 script = ExtResource( 1 )
 
-[node name="Camera" parent="." instance=ExtResource( 2 )]
+[node name="CreditsBox" parent="MainMenu/VBoxContainer" instance=ExtResource( 4 )]
+visible = false
+
+[node name="Camera" parent="MainMenu" instance=ExtResource( 2 )]
+
+[node name="LocalD&T" type="HBoxContainer" parent="."]
+margin_left = -639.0
+margin_top = -360.0
+margin_right = 639.0
+margin_bottom = -320.0
+
+[node name="Label" type="Label" parent="LocalD&T"]
+margin_top = 25.0
+margin_right = 70.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 70, 0 )
+text = "Local:"
+
+[node name="Calendar" type="PanelContainer" parent="LocalD&T"]
+margin_left = 74.0
+margin_right = 160.0
+margin_bottom = 64.0
+
+[node name="Calendar" type="VBoxContainer" parent="LocalD&T/Calendar"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 79.0
+margin_bottom = 57.0
+script = SubResource( 6 )
+
+[node name="Weekday" type="Label" parent="LocalD&T/Calendar/Calendar"]
+margin_right = 72.0
+margin_bottom = 14.0
+text = "Monday"
+align = 1
+valign = 1
+
+[node name="Date" type="HBoxContainer" parent="LocalD&T/Calendar/Calendar"]
+margin_top = 18.0
+margin_right = 72.0
+margin_bottom = 32.0
+alignment = 1
+
+[node name="Day" type="Label" parent="LocalD&T/Calendar/Calendar/Date"]
+margin_right = 16.0
+margin_bottom = 14.0
+text = "04"
+align = 1
+valign = 1
+
+[node name="Month" type="Label" parent="LocalD&T/Calendar/Calendar/Date"]
+margin_left = 20.0
+margin_right = 36.0
+margin_bottom = 14.0
+text = "20"
+align = 1
+valign = 1
+
+[node name="Year" type="Label" parent="LocalD&T/Calendar/Calendar/Date"]
+margin_left = 40.0
+margin_right = 72.0
+margin_bottom = 14.0
+text = "6969"
+align = 1
+valign = 1
+
+[node name="DST" type="HBoxContainer" parent="LocalD&T/Calendar/Calendar"]
+margin_top = 36.0
+margin_right = 72.0
+margin_bottom = 50.0
+alignment = 1
+
+[node name="Label" type="Label" parent="LocalD&T/Calendar/Calendar/DST"]
+margin_left = 1.0
+margin_right = 29.0
+margin_bottom = 14.0
+text = "DST:"
+align = 1
+valign = 1
+
+[node name="Value" type="Label" parent="LocalD&T/Calendar/Calendar/DST"]
+margin_left = 33.0
+margin_right = 70.0
+margin_bottom = 14.0
+text = "FALSE"
+align = 1
+valign = 1
+
+[node name="Clock" type="PanelContainer" parent="LocalD&T"]
+margin_left = 164.0
+margin_right = 265.0
+margin_bottom = 64.0
+
+[node name="Clock" type="VBoxContainer" parent="LocalD&T/Clock"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 94.0
+margin_bottom = 57.0
+alignment = 1
+
+[node name="Header" type="Label" parent="LocalD&T/Clock/Clock"]
+margin_top = 9.0
+margin_right = 87.0
+margin_bottom = 23.0
+text = "Current Time:"
+align = 1
+valign = 1
+
+[node name="Time" type="Label" parent="LocalD&T/Clock/Clock"]
+margin_top = 27.0
+margin_right = 87.0
+margin_bottom = 41.0
+text = "00:00:00"
+align = 1
+valign = 1
+script = SubResource( 5 )
+
+[node name="UniversalD&T" type="HBoxContainer" parent="."]
+margin_left = -640.0
+margin_top = -296.0
+margin_right = 638.0
+margin_bottom = -232.0
+
+[node name="Label" type="Label" parent="UniversalD&T"]
+margin_top = 25.0
+margin_right = 70.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 70, 0 )
+text = "Universal:"
+
+[node name="Calendar" type="PanelContainer" parent="UniversalD&T"]
+margin_left = 74.0
+margin_right = 160.0
+margin_bottom = 64.0
+
+[node name="Calendar" type="VBoxContainer" parent="UniversalD&T/Calendar"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 79.0
+margin_bottom = 57.0
+script = SubResource( 6 )
+local = false
+
+[node name="Weekday" type="Label" parent="UniversalD&T/Calendar/Calendar"]
+margin_right = 72.0
+margin_bottom = 14.0
+text = "Monday"
+align = 1
+valign = 1
+
+[node name="Date" type="HBoxContainer" parent="UniversalD&T/Calendar/Calendar"]
+margin_top = 18.0
+margin_right = 72.0
+margin_bottom = 32.0
+alignment = 1
+
+[node name="Day" type="Label" parent="UniversalD&T/Calendar/Calendar/Date"]
+margin_right = 16.0
+margin_bottom = 14.0
+text = "04"
+align = 1
+valign = 1
+
+[node name="Month" type="Label" parent="UniversalD&T/Calendar/Calendar/Date"]
+margin_left = 20.0
+margin_right = 36.0
+margin_bottom = 14.0
+text = "20"
+align = 1
+valign = 1
+
+[node name="Year" type="Label" parent="UniversalD&T/Calendar/Calendar/Date"]
+margin_left = 40.0
+margin_right = 72.0
+margin_bottom = 14.0
+text = "6969"
+align = 1
+valign = 1
+
+[node name="DST" type="HBoxContainer" parent="UniversalD&T/Calendar/Calendar"]
+margin_top = 36.0
+margin_right = 72.0
+margin_bottom = 50.0
+alignment = 1
+
+[node name="Label" type="Label" parent="UniversalD&T/Calendar/Calendar/DST"]
+margin_left = 1.0
+margin_right = 29.0
+margin_bottom = 14.0
+text = "DST:"
+align = 1
+valign = 1
+
+[node name="Value" type="Label" parent="UniversalD&T/Calendar/Calendar/DST"]
+margin_left = 33.0
+margin_right = 70.0
+margin_bottom = 14.0
+text = "FALSE"
+align = 1
+valign = 1
+
+[node name="Clock" type="PanelContainer" parent="UniversalD&T"]
+margin_left = 164.0
+margin_right = 265.0
+margin_bottom = 64.0
+
+[node name="Clock" type="VBoxContainer" parent="UniversalD&T/Clock"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 94.0
+margin_bottom = 57.0
+alignment = 1
+
+[node name="Header" type="Label" parent="UniversalD&T/Clock/Clock"]
+margin_top = 9.0
+margin_right = 87.0
+margin_bottom = 23.0
+text = "Current Time:"
+align = 1
+valign = 1
+
+[node name="Time" type="Label" parent="UniversalD&T/Clock/Clock"]
+margin_top = 27.0
+margin_right = 87.0
+margin_bottom = 41.0
+text = "00:00:00"
+align = 1
+valign = 1
+script = SubResource( 5 )
+local = false
+
+[connection signal="toggled" from="MainMenu/VBoxContainer/CenterContainer/CreditsButton" to="MainMenu/VBoxContainer/CreditsBox" method="toggled"]
