@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+resource_name = "CreditsBox"
+script/source = "extends PanelContainer
+
+func toggled(state: bool):
+	self.visible = state
+"
+
+[node name="CreditsBox" type="PanelContainer"]
+margin_top = 267.0
+margin_right = 235.0
+margin_bottom = 381.0
+script = SubResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 228.0
+margin_bottom = 107.0
+
+[node name="Header" type="Label" parent="VBoxContainer"]
+margin_right = 221.0
+margin_bottom = 14.0
+text = "Hombrodot was brought to you by:"
+align = 1
+valign = 1
+
+[node name="Members" type="Label" parent="VBoxContainer"]
+margin_top = 18.0
+margin_right = 221.0
+margin_bottom = 100.0
+text = "Caroline - @halotroop2288
+Claire - @hokaze
+Jaylon - @SonicMastr
+Chloe - Stary2001
+@technicaljicama"
+align = 1
+valign = 1
